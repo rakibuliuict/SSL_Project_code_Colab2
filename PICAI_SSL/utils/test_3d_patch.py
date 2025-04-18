@@ -23,13 +23,24 @@ def calculate_metric_percase(pred, gt):
     asd = metric.binary.asd(pred, gt)
     return dice, jc, hd, asd
 
+# def load_image_and_label(image_path):
+#     h5f = h5py.File(image_path, 'r')
+#     t2w = h5f['image']['t2w'][:]
+#     adc = h5f['image']['adc'][:]
+#     hbv = h5f['image']['hbv'][:]
+#     label = h5f['label']['seg'][:].astype(np.uint8)
+#     image = np.stack([t2w, adc, hbv], axis=0).astype(np.float32)
+#     return image, label
+
 def load_image_and_label(image_path):
-    h5f = h5py.File(image_path, 'r')
-    t2w = h5f['image']['t2w'][:]
-    adc = h5f['image']['adc'][:]
-    hbv = h5f['image']['hbv'][:]
-    label = h5f['label']['seg'][:].astype(np.uint8)
-    image = np.stack([t2w, adc, hbv], axis=0).astype(np.float32)
+    """Load MRI modalities and segmentation mask from an h5 file."""
+    with h5py.File(image_path, 'r') as h5f:
+        t2w = h5f['image']['t2w'][:]
+        adc = h5f['image']['adc'][:]
+        hbv = h5f['image']['hbv'][:]
+        label = h5f['label']['seg'][:].astype(np.uint8)
+
+    image = np.stack([t2w, adc, hbv], axis=0).astype(np.float32)  # [3, H, W, D]
     return image, label
 
 def test_single_case_mean(model1, model2, image, stride_xy, stride_z, patch_size, num_classes=1):
