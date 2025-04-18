@@ -87,7 +87,7 @@ def test_single_case_plus(model1, model2, image, stride_xy, stride_z, patch_size
     return test_single_case_mean(model1, model2, image, stride_xy, stride_z, patch_size, num_classes)
 
 def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
-    with open('/content/drive/MyDrive/SSL/Code/Colab2/SSL_Project/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
+    with open('/content/drive/MyDrive/SSL/SSL_Project_code_Colab2/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
         image_list = f.readlines()
     image_list = ["/content/drive/MyDrive/SemiSL/Dataset/PICAI_dataset/" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
     loader = tqdm(image_list)
@@ -102,7 +102,7 @@ def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18,
     return avg_dice
 
 def var_all_case_LA_mean(model1, model2, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
-    with open('/content/drive/MyDrive/SSL/Code/Colab2/SSL_Project/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
+    with open('/content/drive/MyDrive/SSL/SSL_Project_code_Colab2/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
         image_list = f.readlines()
     image_list = ["/content/drive/MyDrive/SSL/Dataset/PICAI_dataset/" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
     loader = tqdm(image_list)
@@ -117,7 +117,7 @@ def var_all_case_LA_mean(model1, model2, num_classes, patch_size=(256, 256, 16),
     return avg_dice
 
 def var_all_case_LA_plus(model1, model2, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
-    with open('/content/drive/MyDrive/SSL/Code/Colab2/SSL_Project/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
+    with open('/content/drive/MyDrive/SSL/SSL_Project_code_Colab2/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
         image_list = f.readlines()
     image_list = ["/content/drive/MyDrive/SSL/Dataset/PICAI_dataset/" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
     loader = tqdm(image_list)
