@@ -89,7 +89,7 @@ def test_single_case_plus(model1, model2, image, stride_xy, stride_z, patch_size
 def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
     with open('/content/drive/MyDrive/SSL/SSL_Project_code_Colab2/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
         image_list = f.readlines()
-    image_list = ["/content/drive/MyDrive/SemiSL/Dataset/PICAI_dataset/" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
+    image_list = ["/content/drive/MyDrive/SSL/Dataset/PICAI_dataset/" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
     loader = tqdm(image_list)
     total_dice = 0.0
     for image_path in loader:
