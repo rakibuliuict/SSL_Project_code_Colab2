@@ -7,6 +7,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 from skimage.measure import label
+import os
 
 def getLargestCC(segmentation):
     labels = label(segmentation)
@@ -34,6 +35,10 @@ def calculate_metric_percase(pred, gt):
 
 def load_image_and_label(image_path):
     """Load MRI modalities and segmentation mask from an h5 file."""
+    print(f"Loading: {image_path}")  # Debugging line
+    if not os.path.exists(image_path):  # Check if the file exists
+        raise FileNotFoundError(f"File does not exist: {image_path}")
+    
     with h5py.File(image_path, 'r') as h5f:
         t2w = h5f['image']['t2w'][:]
         adc = h5f['image']['adc'][:]
@@ -97,17 +102,44 @@ def test_single_case(model, image, stride_xy, stride_z, patch_size, num_classes=
 def test_single_case_plus(model1, model2, image, stride_xy, stride_z, patch_size, num_classes=1):
     return test_single_case_mean(model1, model2, image, stride_xy, stride_z, patch_size, num_classes)
 
+# def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
+#     with open('/content/drive/MyDrive/SSL/SSL_Project_code_Colab2/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
+#         image_list = f.readlines()
+#     image_list = ["/content/drive/MyDrive/SSL/Dataset/PICAI_dataset/" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
+#     loader = tqdm(image_list)
+#     total_dice = 0.0
+#     for image_path in loader:
+#         image, label = load_image_and_label(image_path)
+#         prediction, _ = test_single_case(model, image, stride_xy, stride_z, patch_size, num_classes=num_classes)
+#         dice = metric.binary.dc(prediction, label) if np.sum(prediction) > 0 else 0
+#         total_dice += dice
+#     avg_dice = total_dice / len(image_list)
+#     print('Average Dice coefficient: {:.4f}'.format(avg_dice))
+#     return avg_dice
+
 def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
+    """Evaluate the model on all test cases and return the average Dice score."""
+    image_list = []
     with open('/content/drive/MyDrive/SSL/SSL_Project_code_Colab2/PICAI_SSL/Datasets/picai/data_split/test.txt', 'r') as f:
         image_list = f.readlines()
-    image_list = ["/content/drive/MyDrive/SSL/Dataset/PICAI_dataset/" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
-    loader = tqdm(image_list)
+
+    # Construct valid paths for each patient
+    image_list = [os.path.join('/content/drive/MyDrive/SSL/Dataset/PICAI_dataset/', item.strip(), f"{item.strip()}.h5") for item in image_list]
+    
     total_dice = 0.0
+    loader = tqdm(image_list)
+
     for image_path in loader:
-        image, label = load_image_and_label(image_path)
+        try:
+            image, label = load_image_and_label(image_path)
+        except FileNotFoundError:
+            print(f"Skipping missing file: {image_path}")
+            continue
+
         prediction, _ = test_single_case(model, image, stride_xy, stride_z, patch_size, num_classes=num_classes)
         dice = metric.binary.dc(prediction, label) if np.sum(prediction) > 0 else 0
         total_dice += dice
+
     avg_dice = total_dice / len(image_list)
     print('Average Dice coefficient: {:.4f}'.format(avg_dice))
     return avg_dice
