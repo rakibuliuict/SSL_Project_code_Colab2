@@ -64,7 +64,7 @@ args = parser.parse_args()
 
 
 def create_Vnet(ema=False):
-    net = VNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
+    net = VNet(n_channels=3, n_classes=1, normalization='instancenorm', has_dropout=True)
     net = nn.DataParallel(net)
     model = net.cuda()
     if ema:
@@ -74,7 +74,7 @@ def create_Vnet(ema=False):
 
 
 def create_ResVnet(ema=False):
-    net = ResVNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
+    net = ResVNet(n_channels=3, n_classes=1, normalization='instancenorm', has_dropout=True)
     net = nn.DataParallel(net)
     model = net.cuda()
     if ema:
