@@ -325,8 +325,8 @@ def self_train(args, pre_snapshot_path, self_snapshot_path):
 
 
     pretrained_model = os.path.join(pre_snapshot_path, 'best_model.pth')
-    pretrained_model2 = os.path.join(pre_snapshot_path, 'best_model_resnet.pth')
-    # pretrained_model2 = os.path.join(pre_snapshot_path, 'best_model.pth') #newly add for 7/5/25
+    # pretrained_model2 = os.path.join(pre_snapshot_path, 'best_model_resnet.pth')
+    pretrained_model2 = os.path.join(pre_snapshot_path, 'best_model.pth') #newly add for 7/5/25
 
     load_net_opt(model1, optimizer, pretrained_model)
     load_net_opt(model2, optimizer2, pretrained_model2)
