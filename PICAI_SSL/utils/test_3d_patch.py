@@ -153,7 +153,6 @@ def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18,
     
     loader = tqdm(image_list)
     total_dice = 0.0
-
     for image_path in loader:
         try:
             image, label = load_image_and_label(image_path)

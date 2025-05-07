@@ -224,7 +224,7 @@ def pre_train(args, snapshot_path):
     iter_num = 0
     best_dice = 0
     best_dice2 = 0
-    max_epoch = 81
+    max_epoch = 3
     iterator = tqdm(range(1, max_epoch), ncols=70)
     for epoch_num in iterator:
         logging.info("\n")
@@ -325,7 +325,8 @@ def self_train(args, pre_snapshot_path, self_snapshot_path):
 
 
     pretrained_model = os.path.join(pre_snapshot_path, 'best_model.pth')
-    pretrained_model2 = os.path.join(pre_snapshot_path, 'best_model_resnet.pth')
+    # pretrained_model2 = os.path.join(pre_snapshot_path, 'best_model_resnet.pth')
+    pretrained_model2 = os.path.join(pre_snapshot_path, 'best_model.pth') #newly add for 7/5/25
 
     load_net_opt(model1, optimizer, pretrained_model)
     load_net_opt(model2, optimizer2, pretrained_model2)
