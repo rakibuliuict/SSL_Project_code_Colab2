@@ -224,7 +224,7 @@ def pre_train(args, snapshot_path):
     iter_num = 0
     best_dice = 0
     best_dice2 = 0
-    max_epoch = 16
+    max_epoch = 6
     iterator = tqdm(range(1, max_epoch), ncols=70)
     for epoch_num in iterator:
         logging.info("\n")
@@ -270,7 +270,7 @@ def pre_train(args, snapshot_path):
             logging.info(
                 'iteration %d : loss: %03f, loss_dice: %03f, loss_ce: %03f' % (iter_num, loss, loss_dice, loss_ce))
 
-        if epoch_num % 5 == 0:
+        if epoch_num % 2 == 0:
             model.eval()
             dice_sample = test_3d_patch.var_all_case_LA(model, num_classes=num_classes, patch_size=patch_size,
                                                         stride_xy=18, stride_z=4)
