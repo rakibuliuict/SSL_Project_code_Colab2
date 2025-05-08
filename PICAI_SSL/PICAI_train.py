@@ -343,7 +343,8 @@ def self_train(args, pre_snapshot_path, self_snapshot_path):
     best_dice = 0
     best_dice2 = 0
     mean_best_dice = 0
-    max_epoch = 276
+    # max_epoch = 276
+    max_epoch = 3
     iterator = tqdm(range(1, max_epoch), ncols=70)
     for epoch in iterator:
         logging.info("\n")
