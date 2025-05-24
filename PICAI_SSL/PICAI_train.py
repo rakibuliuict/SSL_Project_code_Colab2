@@ -7,7 +7,6 @@ from xml.etree.ElementInclude import default_loader
 from tqdm import tqdm
 from tensorboardX import SummaryWriter
 import shutil
-import argparse
 import logging
 import random
 import numpy as np
