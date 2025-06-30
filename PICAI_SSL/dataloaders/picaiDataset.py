@@ -73,7 +73,12 @@ class PICAIDataset(Dataset):
         image_ = image_.permute(0, 3, 1, 2)  # [3, D, H, W]
         label_ = label_.permute(2, 0, 1).unsqueeze(0)  # [1, D, H, W]
 
-        return image_.float(), label_.long()
+        # return image_.float(), label_.long()
+        return {
+            'image': image_.float(),
+            'label': label_.long()
+                }
+
 
 
 class CenterCrop(object):
