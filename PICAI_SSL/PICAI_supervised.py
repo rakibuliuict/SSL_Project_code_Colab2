@@ -258,7 +258,7 @@ for epoch in range(start_epoch, args.epochs):
         images, labels = batch['image'].cuda(), batch['label'].cuda()
         outputs, _ = net(images)
 
-        loss = loss_fn(outputs, labels)  # ✅ Use DiceFocalLoss directly
+        loss = loss_fn(outputs, labels.squeeze(1))  # ✅ Use DiceFocalLoss directly
 
         optimizer.zero_grad()
         loss.backward()
