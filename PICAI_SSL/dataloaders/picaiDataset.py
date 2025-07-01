@@ -24,13 +24,13 @@ class PICAIDataset(Dataset):
             ToTensor()
         ])
 
-        if split == 'train_lab':
-            data_path = os.path.join(self.list_dir, 'train_lab.txt')
+        if split == 'train':
+            data_path = os.path.join(self.list_dir, 'train.txt')
             self.transform = tr_transform
-        elif split == 'train_unlab':
-            data_path = os.path.join(self.list_dir, 'train_unlab.txt')
-            self.transform = tr_transform
-            print("unlab transform")
+        # elif split == 'train_unlab':
+        #     data_path = os.path.join(self.list_dir, 'train_unlab.txt')
+        #     self.transform = tr_transform
+        #     print("unlab transform")
         else:
             data_path = os.path.join(self.list_dir, 'test.txt')
             self.transform = test_transform
