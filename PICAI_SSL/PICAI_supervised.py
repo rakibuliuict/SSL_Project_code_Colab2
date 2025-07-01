@@ -218,9 +218,9 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_w
 
 # ------------------ Model ------------------ #
 if args.model == 'VNet':
-    net = VNet(n_channels=3, n_classes=1, normalization='instancenorm', has_dropout=True)
+    net = VNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
 else:
-    net = ResVNet(n_channels=3, n_classes=1, normalization='instancenorm', has_dropout=True)
+    net = ResVNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
 net = nn.DataParallel(net).cuda()
 
 # ------------------ Loss and Optimizer ------------------ #
