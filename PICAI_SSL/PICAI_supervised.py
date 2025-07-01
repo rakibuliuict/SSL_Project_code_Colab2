@@ -224,7 +224,7 @@ else:
 net = nn.DataParallel(net).cuda()
 
 # ------------------ Loss and Optimizer ------------------ #
-loss_fn = DiceFocalLoss(to_onehot_y=False)  # ✅ Combined Dice + Focal Loss
+loss_fn = DiceFocalLoss(sigmoid=True)  # ✅ Combined Dice + Focal Loss
 optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
 # ------------------ Resume Setup ------------------ #
