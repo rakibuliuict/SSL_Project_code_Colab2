@@ -187,7 +187,7 @@ parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL
 parser.add_argument('--exp', type=str, default='Supervised')
 parser.add_argument('--model', type=str, default='VNet', choices=['VNet', 'ResVNet'])
 parser.add_argument('--epochs', type=int, default=20)
-parser.add_argument('--batch_size', type=int, default=1)
+parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--gpu', type=str, default='0')
 parser.add_argument('--save_path', type=str, default='/content/drive/MyDrive/SSL/Trained_model')
