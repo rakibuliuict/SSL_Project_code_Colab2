@@ -43,7 +43,20 @@ class PICAIDataset(Dataset):
         with open(data_path, 'r') as f:
             self.image_list = f.read().splitlines()
 
-        self.image_list = [os.path.join(self.data_dir, f"{pid}", f"{pid}.h5") for pid in self.image_list]
+        # self.image_list = [os.path.join(self.data_dir, f"{pid}", f"{pid}.h5") for pid in self.image_list]
+        valid_image_list = []
+        for pid in self.image_list:
+            pid = pid.strip()
+            if pid == '':
+                continue
+            h5_path = os.path.join(self.data_dir, pid, f"{pid}.h5")
+            if os.path.isfile(h5_path):
+                valid_image_list.append(h5_path)
+            else:
+                logging.warning(f"Skipping invalid or missing file: {h5_path}")
+
+        self.image_list = valid_image_list
+
 
         logging.info("{} set: total {} samples".format(split, len(self.image_list)))
         logging.info("total {} samples".format(self.image_list))
