@@ -18,10 +18,10 @@ def crop_roi_around_label(mri_image, label_mask, margin=10):
 
 def main():
     # 🧠 Hardcoded paths — update as needed
-    image_path = "/content/drive/MyDrive/SSL/Dataset/sample_mri.nii.gz"
-    label_path = "/content/drive/MyDrive/SSL/Dataset/sample_label.nii.gz"
-    output_image_path = "/content/drive/MyDrive/SSL/Dataset/cropped_mri.nii.gz"
-    output_label_path = "/content/drive/MyDrive/SSL/Dataset/cropped_label.nii.gz"
+    image_path = r"E:\Dataset\Picai Dataset\picai_public_images_fold0\10000\10000_1000000_t2w.mha"
+    label_path = r"E:\Dataset\Picai Dataset\picai_labels-main\anatomical_delineations\whole_gland\AI\Bosma22b\10000_1000000.nii.gz\10000_1000000.nii"
+    output_image_path = r"E:\Dataset\Picai Dataset\Croped image"
+    output_label_path = r"E:\Dataset\Picai Dataset\Croped image"
     margin = 10
 
     # Load data
