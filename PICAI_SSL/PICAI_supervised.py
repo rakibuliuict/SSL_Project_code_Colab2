@@ -224,7 +224,7 @@ else:
 net = nn.DataParallel(net).cuda()
 
 # ------------------ Loss and Optimizer ------------------ #
-loss_fn = DiceFocalLoss(to_onehot_y=False, softmax=True)  # ✅ Combined Dice + Focal Loss
+loss_fn = DiceFocalLoss(to_onehot_y=True, softmax=True)  # ✅ Combined Dice + Focal Loss
 optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
 # ------------------ Resume Setup ------------------ #
@@ -258,7 +258,7 @@ for epoch in range(start_epoch, args.epochs):
         images, labels = batch['image'].cuda(), batch['label'].cuda()
         outputs, _ = net(images)
 
-        loss = loss_fn(outputs, labels.squeeze(1))  # ✅ Use DiceFocalLoss directly
+        loss = loss_fn(outputs, labels)  # ✅ Use DiceFocalLoss directly
 
         optimizer.zero_grad()
         loss.backward()
