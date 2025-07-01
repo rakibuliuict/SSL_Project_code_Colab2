@@ -100,7 +100,7 @@ for epoch in range(start_epoch, args.epochs):
         images, labels = batch['image'].cuda(), batch['label'].cuda()
         outputs, _ = net(images)
 
-        loss_ce = ce_loss(outputs, labels.sequeeze(1))
+        loss_ce = ce_loss(outputs, labels.squeeze(1))
         loss_dice = dice_loss(outputs, labels)
         loss = loss_ce + loss_dice
 
