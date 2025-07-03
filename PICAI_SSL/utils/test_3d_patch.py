@@ -203,6 +203,7 @@ def var_all_case_LA_plus(model1, model2, num_classes, patch_size=(256, 256, 16),
         total_dice += dice
     avg_dice = total_dice / len(image_list)
     print('Average Dice coefficient: {:.4f}'.format(avg_dice))
+    
     return avg_dice
 
 
