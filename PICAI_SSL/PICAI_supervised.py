@@ -62,10 +62,7 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_w
 net = VNet(
     spatial_dims=3,
     in_channels=3,
-    out_channels=2,
-    act='relu',
-    norm='instance',
-    dropout_prob=0.5
+    out_channels=2
 )
 net = nn.DataParallel(net).cuda()
 
