@@ -23,7 +23,7 @@ from utils import test_3d_patch
 
 # ------------------ Argument parser ------------------ #
 parser = argparse.ArgumentParser()
-parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/423_picai_dataset')
+parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/160_160_20')
 parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids')
 parser.add_argument('--exp', type=str, default='Supervised')
 parser.add_argument('--model', type=str, default='VNet', choices=['VNet', 'ResVNet'])
@@ -117,7 +117,7 @@ for epoch in range(start_epoch, args.epochs):
     if (epoch + 1) % 2 == 0:
         net.eval()
         dice_score = test_3d_patch.var_all_case_LA(
-            net, num_classes=2, patch_size=(256, 256, 16), stride_xy=18, stride_z=4
+            net, num_classes=2, patch_size=(160, 160, 20), stride_xy=18, stride_z=4
         )
         logging.info(f"Epoch [{epoch+1}/{args.epochs}], Loss: {avg_loss:.4f}, Dice: {dice_score:.4f}")
 
