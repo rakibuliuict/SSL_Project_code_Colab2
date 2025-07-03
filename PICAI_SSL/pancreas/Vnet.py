@@ -198,6 +198,20 @@ import torch
 from torch import nn
 
 
+def center_crop_and_add(upsampled, encoder_feature):
+    """Crop encoder feature map to match upsampled size and add."""
+    diff = [encoder_feature.size(d) - upsampled.size(d) for d in range(2, 5)]
+    crop = [d // 2 for d in diff]
+    encoder_cropped = encoder_feature[
+        :,
+        :,
+        crop[0]:encoder_feature.size(2) - (diff[0] - crop[0]),
+        crop[1]:encoder_feature.size(3) - (diff[1] - crop[1]),
+        crop[2]:encoder_feature.size(4) - (diff[2] - crop[2])
+    ]
+    return upsampled + encoder_cropped
+
+
 class ConvBlock(nn.Module):
     def __init__(self, n_stages, n_filters_in, n_filters_out, normalization='none'):
         super(ConvBlock, self).__init__()
@@ -264,37 +278,36 @@ class VNet(nn.Module):
         self.has_dropout = has_dropout
 
         self.block_one = ConvBlock(1, n_channels, n_filters, normalization)
-        self.block_one_dw = DownsamplingConvBlock(n_filters, n_filters * 2, stride=(2, 2, 1), normalization=normalization)
+        self.block_one_dw = DownsamplingConvBlock(n_filters, n_filters * 2, normalization=normalization)
 
         self.block_two = ConvBlock(2, n_filters * 2, n_filters * 2, normalization)
-        self.block_two_dw = DownsamplingConvBlock(n_filters * 2, n_filters * 4, stride=(2, 2, 1), normalization=normalization)
+        self.block_two_dw = DownsamplingConvBlock(n_filters * 2, n_filters * 4, normalization=normalization)
 
         self.block_three = ConvBlock(3, n_filters * 4, n_filters * 4, normalization)
-        self.block_three_dw = DownsamplingConvBlock(n_filters * 4, n_filters * 8, stride=(2, 2, 1), normalization=normalization)
+        self.block_three_dw = DownsamplingConvBlock(n_filters * 4, n_filters * 8, normalization=normalization)
 
         self.block_four = ConvBlock(3, n_filters * 8, n_filters * 8, normalization)
-        self.block_four_dw = DownsamplingConvBlock(n_filters * 8, n_filters * 16, stride=(2, 2, 1), normalization=normalization)
+        self.block_four_dw = DownsamplingConvBlock(n_filters * 8, n_filters * 16, normalization=normalization)
 
         self.block_five = ConvBlock(3, n_filters * 16, n_filters * 16, normalization)
-        self.block_five_up = UpsamplingDeconvBlock(n_filters * 16, n_filters * 8, stride=(2, 2, 1), normalization=normalization)
+        self.block_five_up = UpsamplingDeconvBlock(n_filters * 16, n_filters * 8, normalization=normalization)
 
         self.block_six = ConvBlock(3, n_filters * 8, n_filters * 8, normalization)
-        self.block_six_up = UpsamplingDeconvBlock(n_filters * 8, n_filters * 4, stride=(2, 2, 1), normalization=normalization)
+        self.block_six_up = UpsamplingDeconvBlock(n_filters * 8, n_filters * 4, normalization=normalization)
 
         self.block_seven = ConvBlock(3, n_filters * 4, n_filters * 4, normalization)
-        self.block_seven_up = UpsamplingDeconvBlock(n_filters * 4, n_filters * 2, stride=(2, 2, 1), normalization=normalization)
+        self.block_seven_up = UpsamplingDeconvBlock(n_filters * 4, n_filters * 2, normalization=normalization)
 
         self.block_eight = ConvBlock(2, n_filters * 2, n_filters * 2, normalization)
-        self.block_eight_up = UpsamplingDeconvBlock(n_filters * 2, n_filters, stride=(2, 2, 1), normalization=normalization)
+        self.block_eight_up = UpsamplingDeconvBlock(n_filters * 2, n_filters, normalization=normalization)
 
-        self.branchs = nn.ModuleList()
-        for _ in range(1):  # Only one output branch
-            seq = nn.Sequential(
+        self.branchs = nn.ModuleList([
+            nn.Sequential(
                 ConvBlock(1, n_filters, n_filters, normalization),
                 nn.Dropout3d(p=0.5) if has_dropout else nn.Identity(),
                 nn.Conv3d(n_filters, n_classes, kernel_size=1)
             )
-            self.branchs.append(seq)
+        ])
 
         if has_dropout:
             self.dropout = nn.Dropout3d(p=0.5)
@@ -302,46 +315,36 @@ class VNet(nn.Module):
     def encoder(self, x):
         x1 = self.block_one(x)
         x2 = self.block_one_dw(x1)
-
         x3 = self.block_two(x2)
         x4 = self.block_two_dw(x3)
-
         x5 = self.block_three(x4)
         x6 = self.block_three_dw(x5)
-
         x7 = self.block_four(x6)
         x8 = self.block_four_dw(x7)
-
         x9 = self.block_five(x8)
         if self.has_dropout:
             x9 = self.dropout(x9)
-
         return [x1, x3, x5, x7, x9]
 
     def decoder(self, features):
         x1, x3, x5, x7, x9 = features
-
-        d1 = self.block_five_up(x9) + x7
+        d1 = center_crop_and_add(self.block_five_up(x9), x7)
         d2 = self.block_six(d1)
-        d3 = self.block_six_up(d2) + x5
+        d3 = center_crop_and_add(self.block_six_up(d2), x5)
         d4 = self.block_seven(d3)
-        d5 = self.block_seven_up(d4) + x3
+        d5 = center_crop_and_add(self.block_seven_up(d4), x3)
         d6 = self.block_eight(d5)
-        d7 = self.block_eight_up(d6) + x1
-
+        d7 = center_crop_and_add(self.block_eight_up(d6), x1)
         out = [branch(d7) for branch in self.branchs]
-        out.append(d2)  # optional intermediate feature
+        out.append(d2)
         return out
 
     def forward(self, x, turnoff_drop=False):
         if turnoff_drop:
             prev_state = self.has_dropout
             self.has_dropout = False
-
         features = self.encoder(x)
         out = self.decoder(features)
-
         if turnoff_drop:
             self.has_dropout = prev_state
-
         return out
