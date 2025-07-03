@@ -196,24 +196,20 @@
 
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 
 def center_crop_and_add(upsampled, encoder_feature):
-    """Center crop encoder feature map to match upsampled size and add."""
+    """Crop encoder feature map to match upsampled size and add."""
     up_shape = upsampled.shape[2:]
     enc_shape = encoder_feature.shape[2:]
     crop_slices = []
     for i in range(3):
         delta = enc_shape[i] - up_shape[i]
         if delta < 0:
-            raise ValueError(
-                f"Upsampled size {up_shape} is larger than encoder feature size {enc_shape} at dim {i}"
-            )
+            raise ValueError(f"Upsampled size {up_shape} is larger than encoder feature size {enc_shape} at dim {i}")
         start = delta // 2
         end = start + up_shape[i]
-        if end > enc_shape[i]:
-            end = enc_shape[i]
-            start = end - up_shape[i]
         crop_slices.append(slice(start, end))
     encoder_cropped = encoder_feature[:, :, crop_slices[0], crop_slices[1], crop_slices[2]]
     return upsampled + encoder_cropped
@@ -260,10 +256,10 @@ class DownsamplingConvBlock(nn.Module):
         return self.conv(x)
 
 
-class UpsamplingDeconvBlock(nn.Module):
-    def __init__(self, n_filters_in, n_filters_out, stride=(2, 2, 1), normalization='none'):
-        super(UpsamplingDeconvBlock, self).__init__()
-        ops = [nn.ConvTranspose3d(n_filters_in, n_filters_out, kernel_size=stride, stride=stride)]
+class InterpolateUpBlock(nn.Module):
+    def __init__(self, n_filters_in, n_filters_out, normalization='none'):
+        super(InterpolateUpBlock, self).__init__()
+        ops = [nn.Conv3d(n_filters_in, n_filters_out, kernel_size=1)]
         if normalization == 'batchnorm':
             ops.append(nn.BatchNorm3d(n_filters_out))
         elif normalization == 'groupnorm':
@@ -275,7 +271,8 @@ class UpsamplingDeconvBlock(nn.Module):
         ops.append(nn.ReLU(inplace=True))
         self.conv = nn.Sequential(*ops)
 
-    def forward(self, x):
+    def forward(self, x, target_shape):
+        x = F.interpolate(x, size=target_shape, mode='trilinear', align_corners=False)
         return self.conv(x)
 
 
@@ -297,16 +294,16 @@ class VNet(nn.Module):
         self.block_four_dw = DownsamplingConvBlock(n_filters * 8, n_filters * 16, normalization=normalization)
 
         self.block_five = ConvBlock(3, n_filters * 16, n_filters * 16, normalization)
-        self.block_five_up = UpsamplingDeconvBlock(n_filters * 16, n_filters * 8, normalization=normalization)
+        self.block_five_up = InterpolateUpBlock(n_filters * 16, n_filters * 8, normalization)
 
         self.block_six = ConvBlock(3, n_filters * 8, n_filters * 8, normalization)
-        self.block_six_up = UpsamplingDeconvBlock(n_filters * 8, n_filters * 4, normalization=normalization)
+        self.block_six_up = InterpolateUpBlock(n_filters * 8, n_filters * 4, normalization)
 
         self.block_seven = ConvBlock(3, n_filters * 4, n_filters * 4, normalization)
-        self.block_seven_up = UpsamplingDeconvBlock(n_filters * 4, n_filters * 2, normalization=normalization)
+        self.block_seven_up = InterpolateUpBlock(n_filters * 4, n_filters * 2, normalization)
 
         self.block_eight = ConvBlock(2, n_filters * 2, n_filters * 2, normalization)
-        self.block_eight_up = UpsamplingDeconvBlock(n_filters * 2, n_filters, normalization=normalization)
+        self.block_eight_up = InterpolateUpBlock(n_filters * 2, n_filters, normalization)
 
         self.branchs = nn.ModuleList([
             nn.Sequential(
@@ -335,13 +332,21 @@ class VNet(nn.Module):
 
     def decoder(self, features):
         x1, x3, x5, x7, x9 = features
-        d1 = center_crop_and_add(self.block_five_up(x9), x7)
+        d1 = self.block_five_up(x9, x7.shape[2:])
+        d1 = d1 + x7
         d2 = self.block_six(d1)
-        d3 = center_crop_and_add(self.block_six_up(d2), x5)
+
+        d3 = self.block_six_up(d2, x5.shape[2:])
+        d3 = d3 + x5
         d4 = self.block_seven(d3)
-        d5 = center_crop_and_add(self.block_seven_up(d4), x3)
+
+        d5 = self.block_seven_up(d4, x3.shape[2:])
+        d5 = d5 + x3
         d6 = self.block_eight(d5)
-        d7 = center_crop_and_add(self.block_eight_up(d6), x1)
+
+        d7 = self.block_eight_up(d6, x1.shape[2:])
+        d7 = d7 + x1
+
         out = [branch(d7) for branch in self.branchs]
         out.append(d2)
         return out
