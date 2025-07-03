@@ -59,7 +59,15 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_w
 
 # ------------------ Model ------------------ #
 if args.model == 'VNet':
-    net = VNet(spatial_dims=3, in_channels=3, out_channels=2, act='relu', dropout_prob=0.5)
+    net = VNet(
+    spatial_dims=3,
+    in_channels=3,
+    out_channels=2,
+    act='relu',
+    dropout_prob=0.5,
+    bias=True,
+    base_n_features=24  # 24 is divisible by 3
+)
 else:
     net = ResVNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
 net = nn.DataParallel(net).cuda()
