@@ -6,6 +6,7 @@ import numpy as np
 # Base path where patient folders are organized
 organized_base = "/content/drive/MyDrive/SSL/Dataset/423_picai_dataset"
 
+
 # List all patient IDs (folder names that are digits)
 patient_ids = [name for name in os.listdir(organized_base)
                if os.path.isdir(os.path.join(organized_base, name)) and name.isdigit()]
