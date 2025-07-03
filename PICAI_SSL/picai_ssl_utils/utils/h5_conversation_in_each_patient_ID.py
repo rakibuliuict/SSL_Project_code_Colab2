@@ -4,7 +4,7 @@ import nibabel as nib
 import numpy as np
 
 # Base path where patient folders are organized
-organized_base = '/content/drive/MyDrive/SSL/Dataset/423_picai_dataset'
+organized_base = r'E:\Dataset\Preprocessed_paicai_data\cropped\425_image_ai_label\423_picai_dataset'
 
 
 # List all patient IDs (folder names that are digits)

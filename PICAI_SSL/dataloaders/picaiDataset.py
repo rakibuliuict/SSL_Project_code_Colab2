@@ -16,11 +16,11 @@ class PICAIDataset(Dataset):
         self.reverse = reverse
 
         tr_transform = Compose([
-            RandomCrop((144, 144, 16)),
+            RandomCrop((160, 160, 20)),
             ToTensor()
         ])
         test_transform = Compose([
-            CenterCrop((144, 144, 16)),
+            CenterCrop((160, 160, 20)),
             ToTensor()
         ])
 
@@ -163,7 +163,7 @@ class ToTensor(object):
 
 
 if __name__ == '__main__':
-    data_dir = '/content/drive/MyDrive/SSL/Dataset/423_picai_dataset'
+    data_dir = '/content/drive/MyDrive/SSL/Dataset/160_160_20'
     list_dir = '/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids'
 
     labset = PICAIDataset(data_dir, list_dir, split='train_lab')
