@@ -199,16 +199,21 @@ from torch import nn
 
 
 def center_crop_and_add(upsampled, encoder_feature):
-    """Crop encoder feature map to match upsampled size and add."""
+    """Center crop encoder feature map to match upsampled size and add."""
     up_shape = upsampled.shape[2:]
     enc_shape = encoder_feature.shape[2:]
     crop_slices = []
     for i in range(3):
         delta = enc_shape[i] - up_shape[i]
         if delta < 0:
-            raise ValueError(f"Upsampled size {up_shape} is larger than encoder feature size {enc_shape} at dim {i}")
+            raise ValueError(
+                f"Upsampled size {up_shape} is larger than encoder feature size {enc_shape} at dim {i}"
+            )
         start = delta // 2
         end = start + up_shape[i]
+        if end > enc_shape[i]:
+            end = enc_shape[i]
+            start = end - up_shape[i]
         crop_slices.append(slice(start, end))
     encoder_cropped = encoder_feature[:, :, crop_slices[0], crop_slices[1], crop_slices[2]]
     return upsampled + encoder_cropped
