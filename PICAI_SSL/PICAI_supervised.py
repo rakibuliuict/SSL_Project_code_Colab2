@@ -23,8 +23,8 @@ from utils import test_3d_patch
 
 # ------------------ Argument parser ------------------ #
 parser = argparse.ArgumentParser()
-parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/PICAI_dataset')
-parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL/SSL_Project_code_Colab2/PICAI_SSL/Datasets/picai/data_split_all')
+parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/423_picai_dataset')
+parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids')
 parser.add_argument('--exp', type=str, default='Supervised')
 parser.add_argument('--model', type=str, default='VNet', choices=['VNet', 'ResVNet'])
 parser.add_argument('--epochs', type=int, default=50)
