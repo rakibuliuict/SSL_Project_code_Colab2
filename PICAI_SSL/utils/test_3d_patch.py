@@ -144,12 +144,12 @@ def test_single_case_plus(model1, model2, image, stride_xy, stride_z, patch_size
     print('Average Dice coefficient: {:.4f}'.format(avg_dice))
     return avg_dice
 
-def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
+def var_all_case_LA(model, num_classes, patch_size=(160, 160, 16), stride_xy=18, stride_z=4):
     """Evaluate the model on all test cases and return the average Dice score."""
     with open('/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids/test.txt', 'r') as f:
         image_list = f.readlines()
 
-    image_list = [os.path.join('/content/drive/MyDrive/SSL/Dataset/160_160_20', item.strip(), f"{item.strip()}.h5") for item in image_list]
+    image_list = [os.path.join('/content/drive/MyDrive/SSL/Dataset/160_160_16', item.strip(), f"{item.strip()}.h5") for item in image_list]
     
     loader = tqdm(image_list)
     total_dice = 0.0
@@ -175,10 +175,10 @@ def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18,
     print('Average Dice coefficient: {:.4f}'.format(avg_dice))
     return avg_dice
 
-def var_all_case_LA_mean(model1, model2, num_classes, patch_size=(144, 144, 16), stride_xy=18, stride_z=4):
+def var_all_case_LA_mean(model1, model2, num_classes, patch_size=(160, 160, 16), stride_xy=18, stride_z=4):
     with open('/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids/test.txt', 'r') as f:
         image_list = f.readlines()
-    image_list = ["/content/drive/MyDrive/SSL/Dataset/160_160_20" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
+    image_list = ["/content/drive/MyDrive/SSL/Dataset/160_160_16" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
     loader = tqdm(image_list)
     total_dice = 0.0
     for image_path in loader:
@@ -190,10 +190,10 @@ def var_all_case_LA_mean(model1, model2, num_classes, patch_size=(144, 144, 16),
     print('Average Dice coefficient: {:.4f}'.format(avg_dice))
     return avg_dice
 
-def var_all_case_LA_plus(model1, model2, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
+def var_all_case_LA_plus(model1, model2, num_classes, patch_size=(160, 160, 16), stride_xy=18, stride_z=4):
     with open('/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids/test.txt', 'r') as f:
         image_list = f.readlines()
-    image_list = ["/content/drive/MyDrive/SSL/Dataset/160_160_20" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
+    image_list = ["/content/drive/MyDrive/SSL/Dataset/160_160_16" + item.strip() + "/" + item.strip() + ".h5" for item in image_list]
     loader = tqdm(image_list)
     total_dice = 0.0
     for image_path in loader:
