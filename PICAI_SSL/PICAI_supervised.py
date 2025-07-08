@@ -343,7 +343,7 @@ parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL
 parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids')
 parser.add_argument('--exp', type=str, default='Supervised')
 parser.add_argument('--model', type=str, default='VNet', choices=['VNet', 'ResVNet'])
-parser.add_argument('--epochs', type=int, default=5)
+parser.add_argument('--epochs', type=int, default=50)
 parser.add_argument('--batch_size', type=int, default=2)
 parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--gpu', type=str, default='0')
@@ -386,7 +386,7 @@ dice_loss = DiceLoss(nclass=2)
 optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
 # ------------------ Resume Setup ------------------ #
-start_epoch = 0  # <<< CHANGE HERE to resume training
+start_epoch = 4  # <<< CHANGE HERE to resume training
 best_dice = 0
 checkpoint_path = os.path.join(args.save_path, "last_checkpoint.pth")
 
@@ -430,7 +430,7 @@ for epoch in range(start_epoch, args.epochs):
     dice_score = None
 
     # ------------------ Evaluation ------------------ #
-    if (epoch + 1) % 2 == 0:
+    if (epoch + 1) % 5 == 0:
         net.eval()
         dice_score = test_3d_patch.var_all_case_LA(
             net, num_classes=2, patch_size=(160, 160, 16), stride_xy=18, stride_z=4
