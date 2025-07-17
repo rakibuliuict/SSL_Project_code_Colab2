@@ -388,7 +388,7 @@ dice_loss = DiceLoss(nclass=2)
 optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
 # ------------------ Resume Setup ------------------ #
-start_epoch = 79  # <<< CHANGE HERE to resume training
+start_epoch = 69  # <<< CHANGE HERE to resume training
 best_dice = 0
 checkpoint_path = os.path.join(args.save_path, "last_checkpoint.pth")
 
