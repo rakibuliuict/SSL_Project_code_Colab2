@@ -386,7 +386,7 @@ dice_loss = DiceLoss(nclass=2)
 optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
 # ------------------ Resume Setup ------------------ #
-start_epoch = 4  # <<< CHANGE HERE to resume training
+start_epoch = 49  # <<< CHANGE HERE to resume training
 best_dice = 0
 checkpoint_path = os.path.join(args.save_path, "last_checkpoint.pth")
 
@@ -416,9 +416,10 @@ for epoch in range(start_epoch, args.epochs):
         images, labels = batch['image'].cuda(), batch['label'].cuda()
         outputs, _ = net(images)
 
-        loss_ce = ce_loss(outputs, labels.squeeze(1))
+        # loss_ce = ce_loss(outputs, labels.squeeze(1))
         loss_dice = dice_loss(outputs, labels)
-        loss = loss_ce + loss_dice
+        # loss = loss_ce + loss_dice
+        loss = loss_dice
 
         optimizer.zero_grad()
         loss.backward()
