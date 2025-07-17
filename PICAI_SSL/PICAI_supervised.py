@@ -373,6 +373,8 @@ torch.cuda.manual_seed(seed)
 dataset = PICAIDataset(args.root_path, args.list_path, split='train')
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=4, drop_last=True)
 
+
+
 # ------------------ Model ------------------ #
 if args.model == 'VNet':
     net = VNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
@@ -386,7 +388,7 @@ dice_loss = DiceLoss(nclass=2)
 optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
 # ------------------ Resume Setup ------------------ #
-start_epoch = 49  # <<< CHANGE HERE to resume training
+start_epoch = 79  # <<< CHANGE HERE to resume training
 best_dice = 0
 checkpoint_path = os.path.join(args.save_path, "last_checkpoint.pth")
 
