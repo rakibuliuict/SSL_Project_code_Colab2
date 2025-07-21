@@ -125,7 +125,7 @@ for epoch in range(start_epoch, args.epochs):
     dice_score = None
 
     # ------------------ Validation ------------------ #
-    if (epoch + 1) % 1 == 0:
+    if (epoch + 1) % 2 == 0:
         net.eval()
         dice_metric.reset()
 
