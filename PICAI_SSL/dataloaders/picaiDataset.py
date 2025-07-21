@@ -16,11 +16,11 @@ class PICAIDataset(Dataset):
         self.reverse = reverse
 
         tr_transform = Compose([
-            RandomCrop((160, 160, 20)),
+            RandomCrop((160, 160, 16)),
             ToTensor()
         ])
         test_transform = Compose([
-            CenterCrop((160, 160, 20)),
+            CenterCrop((160, 160, 16)),
             ToTensor()
         ])
 
