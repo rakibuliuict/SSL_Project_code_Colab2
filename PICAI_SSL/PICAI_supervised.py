@@ -13,9 +13,9 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import shutil
 
-from networks.ResVNet import ResVNet
+# from networks.ResVNet import ResVNet
 import segmentation_models_pytorch_3d as smp
-from pancreas.Vnet import VNet
+# from pancreas.Vnet import VNet
 from dataloaders.picaiDataset import PICAIDataset
 from utils.LA_utils import to_cuda
 from pancreas.losses import DiceLoss
