@@ -107,52 +107,17 @@ else:
     metrics = []
 
 # ------------------ Training Loop ------------------ #
-# for epoch in range(start_epoch, args.epochs):
-#     net.train()
-#     running_loss = 0.0
-
-#     for batch in tqdm(dataloader, ncols=80):
-#         images, labels = batch['image'].cuda(), batch['label'].cuda()
-#         outputs, _ = net(images)
-
-#         # loss_ce = ce_loss(outputs, labels.squeeze(1))
-#         loss_dice = dice_loss(outputs, labels)
-#         # loss = loss_ce + loss_dice
-#         loss = loss_dice
-
-#         optimizer.zero_grad()
-#         loss.backward()
-#         optimizer.step()
-
-#         running_loss += loss.item()
-
-#     avg_loss = running_loss / len(dataloader)
-#     dice_score = None
-
-
 for epoch in range(start_epoch, args.epochs):
     net.train()
     running_loss = 0.0
 
     for batch in tqdm(dataloader, ncols=80):
         images, labels = batch['image'].cuda(), batch['label'].cuda()
+        outputs, _ = net(images)
 
-        # Fix dimension order if necessary (H, W, D → D, H, W)
-        if images.shape[2:] == (160, 160, 16):
-            images = images.permute(0, 1, 4, 2, 3)  # (B, C, D, H, W)
-            labels = labels.permute(0, 1, 4, 2, 3)
-        
-        
-        print(f"Input shape to model: {images.shape}")
-        print(f"Label shape to model: {images.shape}")
-
-
-        outputs = net(images)  # ← only one output from smp.Unet
-
-        print(f"Output shape to model: {images.shape}")
-        print(f"Input shape to model: {labels.shape}")
-
+        # loss_ce = ce_loss(outputs, labels.squeeze(1))
         loss_dice = dice_loss(outputs, labels)
+        # loss = loss_ce + loss_dice
         loss = loss_dice
 
         optimizer.zero_grad()
@@ -163,6 +128,41 @@ for epoch in range(start_epoch, args.epochs):
 
     avg_loss = running_loss / len(dataloader)
     dice_score = None
+
+
+# for epoch in range(start_epoch, args.epochs):
+#     net.train()
+#     running_loss = 0.0
+
+#     for batch in tqdm(dataloader, ncols=80):
+#         images, labels = batch['image'].cuda(), batch['label'].cuda()
+
+#         # Fix dimension order if necessary (H, W, D → D, H, W)
+#         if images.shape[2:] == (160, 160, 16):
+#             images = images.permute(0, 1, 4, 2, 3)  # (B, C, D, H, W)
+#             labels = labels.permute(0, 1, 4, 2, 3)
+        
+        
+#         print(f"Input shape to model: {images.shape}")
+#         print(f"Label shape to model: {images.shape}")
+
+
+#         outputs = net(images)  # ← only one output from smp.Unet
+
+#         print(f"Output shape to model: {images.shape}")
+#         print(f"Input shape to model: {labels.shape}")
+
+#         loss_dice = dice_loss(outputs, labels)
+#         loss = loss_dice
+
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
+
+#         running_loss += loss.item()
+
+#     avg_loss = running_loss / len(dataloader)
+#     dice_score = None
 
     # ------------------ Evaluation ------------------ #
     if (epoch + 1) % 5 == 0:
