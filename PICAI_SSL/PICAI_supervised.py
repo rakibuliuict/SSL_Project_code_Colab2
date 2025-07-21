@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/160_160_16')
 parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids')
 parser.add_argument('--exp', type=str, default='Supervised')
-parser.add_argument('--epochs', type=int, default=10)
+parser.add_argument('--epochs', type=int, default=4)
 parser.add_argument('--batch_size', type=int, default=2)
 parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--gpu', type=str, default='0')
@@ -125,7 +125,7 @@ for epoch in range(start_epoch, args.epochs):
     dice_score = None
 
     # ------------------ Validation ------------------ #
-    if (epoch + 1) % 5 == 0:
+    if (epoch + 1) % 1 == 0:
         net.eval()
         dice_metric.reset()
 
