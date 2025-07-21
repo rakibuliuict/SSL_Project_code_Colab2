@@ -141,7 +141,7 @@ for epoch in range(start_epoch, args.epochs):
 
                 dice_metric(y_pred=post_label(val_outputs), y=post_label(val_labels))
 
-        dice_score = dice_metric.aggregate().item()
+        dice_score = dice_metric.aggregate()[0].item()
         logging.info(f"Epoch [{epoch+1}/{args.epochs}], Loss: {avg_loss:.4f}, Val Dice: {dice_score:.4f}")
 
         # Save best model
