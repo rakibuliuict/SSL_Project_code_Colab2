@@ -73,7 +73,7 @@ model = smp.Unet(
     encoder_name="resnet50",
     in_channels=3,  # or 1, depending on your input channels
     strides=((2, 2, 1), (2, 2, 2), (2, 2, 2), (2, 2, 1), (2, 2, 1)),
-    classes=2,  # <=== NOT 2, use 1 output channel for binary segmentation
+    classes=1,  # <=== NOT 2, use 1 output channel for binary segmentation
 )
 
 net = nn.DataParallel(model).to(device)
