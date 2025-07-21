@@ -107,17 +107,44 @@ else:
     metrics = []
 
 # ------------------ Training Loop ------------------ #
+# for epoch in range(start_epoch, args.epochs):
+#     net.train()
+#     running_loss = 0.0
+
+#     for batch in tqdm(dataloader, ncols=80):
+#         images, labels = batch['image'].cuda(), batch['label'].cuda()
+#         outputs, _ = net(images)
+
+#         # loss_ce = ce_loss(outputs, labels.squeeze(1))
+#         loss_dice = dice_loss(outputs, labels)
+#         # loss = loss_ce + loss_dice
+#         loss = loss_dice
+
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
+
+#         running_loss += loss.item()
+
+#     avg_loss = running_loss / len(dataloader)
+#     dice_score = None
+
+
 for epoch in range(start_epoch, args.epochs):
     net.train()
     running_loss = 0.0
 
     for batch in tqdm(dataloader, ncols=80):
         images, labels = batch['image'].cuda(), batch['label'].cuda()
-        outputs, _ = net(images)
 
-        # loss_ce = ce_loss(outputs, labels.squeeze(1))
+        # Fix dimension order if necessary (H, W, D → D, H, W)
+        if images.shape[2:] == (160, 160, 16):
+            images = images.permute(0, 1, 4, 2, 3)  # (B, C, D, H, W)
+            labels = labels.permute(0, 1, 4, 2, 3)
+
+        outputs = net(images)  # ← only one output from smp.Unet
+
         loss_dice = dice_loss(outputs, labels)
-        # loss = loss_ce + loss_dice
         loss = loss_dice
 
         optimizer.zero_grad()
