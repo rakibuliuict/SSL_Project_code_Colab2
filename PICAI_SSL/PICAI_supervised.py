@@ -55,7 +55,7 @@ torch.cuda.manual_seed(seed)
 train_dataset = PICAIDataset(args.root_path, args.list_path, split='train')
 val_dataset = PICAIDataset(args.root_path, args.list_path, split='val')  # Add validation support
 
-train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4, drop_last=True)
+train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=2, drop_last=True)
 val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=2)
 
 # ------------------ Model ------------------ #
