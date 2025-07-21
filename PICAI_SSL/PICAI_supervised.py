@@ -141,8 +141,16 @@ for epoch in range(start_epoch, args.epochs):
         if images.shape[2:] == (160, 160, 16):
             images = images.permute(0, 1, 4, 2, 3)  # (B, C, D, H, W)
             labels = labels.permute(0, 1, 4, 2, 3)
+        
+        
+        print(f"Input shape to model: {images.shape}")
+        print(f"Label shape to model: {images.shape}")
+
 
         outputs = net(images)  # ← only one output from smp.Unet
+
+        print(f"Output shape to model: {images.shape}")
+        print(f"Input shape to model: {labels.shape}")
 
         loss_dice = dice_loss(outputs, labels)
         loss = loss_dice
