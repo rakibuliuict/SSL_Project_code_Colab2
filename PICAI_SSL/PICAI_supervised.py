@@ -14,6 +14,7 @@ from tqdm import tqdm
 import shutil
 
 from networks.ResVNet import ResVNet
+import segmentation_models_pytorch_3d as smp
 from pancreas.Vnet import VNet
 from dataloaders.picaiDataset import PICAIDataset
 from utils.LA_utils import to_cuda
@@ -25,7 +26,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/160_160_16')
 parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids')
 parser.add_argument('--exp', type=str, default='Supervised')
-parser.add_argument('--model', type=str, default='ResVNet', choices=['VNet', 'ResVNet'])
+# parser.add_argument('--model', type=str, default='ResVNet', choices=['VNet', 'ResVNet'])
 parser.add_argument('--epochs', type=int, default=100)
 parser.add_argument('--batch_size', type=int, default=2)
 parser.add_argument('--lr', type=float, default=1e-3)
@@ -59,11 +60,24 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_w
 
 
 # ------------------ Model ------------------ #
-if args.model == 'VNet':
-    net = VNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
-else:
-    net = ResVNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
-net = nn.DataParallel(net).cuda()
+# if args.model == 'VNet':
+#     net = VNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
+# else:
+#     net = ResVNet(n_channels=3, n_classes=2, normalization='instancenorm', has_dropout=True)
+# net = nn.DataParallel(net).cuda()
+
+# 3D Unet with resnet50 encoder (assumes your smp version supports 3D Unet)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+model = smp.Unet(
+    encoder_name="resnet50",
+    in_channels=3,
+    strides=((2, 2, 2), (4, 2, 1), (2, 2, 2), (2, 2, 1), (1, 2, 3)),
+    classes=2,
+).to(device)
+
+net = nn.DataParallel(model).to(device)
+
 
 # ------------------ Loss and Optimizer ------------------ #
 ce_loss = nn.CrossEntropyLoss()
