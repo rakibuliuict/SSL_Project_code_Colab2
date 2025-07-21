@@ -16,8 +16,8 @@ import shutil
 from monai.losses import DiceFocalLoss
 from monai.metrics import DiceMetric
 from monai.transforms import Activations, AsDiscrete
+from monai.networks.nets import VNet
 
-import segmentation_models_pytorch_3d as smp
 from dataloaders.picaiDataset import PICAIDataset
 
 # ------------------ Argument parser ------------------ #
@@ -53,20 +53,15 @@ torch.cuda.manual_seed(seed)
 
 # ------------------ Dataset ------------------ #
 train_dataset = PICAIDataset(args.root_path, args.list_path, split='train')
-val_dataset = PICAIDataset(args.root_path, args.list_path, split='val')  # Add validation support
+val_dataset = PICAIDataset(args.root_path, args.list_path, split='val')
 
 train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=2, drop_last=True)
 val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=2)
 
 # ------------------ Model ------------------ #
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = smp.Unet(
-    encoder_name="resnet50",
-    in_channels=3,
-    strides=((2, 2, 1), (2, 2, 2), (2, 2, 2), (2, 2, 1), (2, 2, 1)),
-    classes=1,
-)
-net = nn.DataParallel(model).to(device)
+model = VNet(spatial_dims=3, in_channels=3, out_channels=1, dropout_prob=0.1)
+net = model.to(device)
 
 # ------------------ Loss, Optimizer, Metrics ------------------ #
 loss_fn = DiceFocalLoss(sigmoid=True, to_onehot_y=False)
@@ -104,9 +99,7 @@ for epoch in range(start_epoch, args.epochs):
     running_loss = 0.0
 
     for batch in tqdm(train_loader, ncols=80):
-        images, labels = batch['image'].cuda(), batch['label'].cuda()
-
-        # Convert shape to (B, C, D, H, W)
+        images, labels = batch['image'].to(device), batch['label'].to(device)
         if images.shape[2:] == (160, 160, 16):
             images = images.permute(0, 1, 4, 2, 3)
             labels = labels.permute(0, 1, 4, 2, 3)
@@ -131,7 +124,7 @@ for epoch in range(start_epoch, args.epochs):
 
         with torch.no_grad():
             for val_batch in val_loader:
-                val_images, val_labels = val_batch['image'].cuda(), val_batch['label'].cuda()
+                val_images, val_labels = val_batch['image'].to(device), val_batch['label'].to(device)
                 val_images = val_images.permute(0, 1, 4, 2, 3)
                 val_labels = val_labels.permute(0, 1, 4, 2, 3)
 
@@ -144,7 +137,6 @@ for epoch in range(start_epoch, args.epochs):
         dice_score = dice_metric.aggregate()[0].item()
         logging.info(f"Epoch [{epoch+1}/{args.epochs}], Loss: {avg_loss:.4f}, Val Dice: {dice_score:.4f}")
 
-        # Save best model
         best_model_path = os.path.join(args.save_path, "best_model.pth")
         if dice_score > best_dice:
             if os.path.exists(best_model_path):
