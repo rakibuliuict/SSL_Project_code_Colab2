@@ -27,7 +27,7 @@ parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL
 parser.add_argument('--list_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids')
 parser.add_argument('--exp', type=str, default='Supervised')
 # parser.add_argument('--model', type=str, default='ResVNet', choices=['VNet', 'ResVNet'])
-parser.add_argument('--epochs', type=int, default=100)
+parser.add_argument('--epochs', type=int, default=10)
 parser.add_argument('--batch_size', type=int, default=2)
 parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--gpu', type=str, default='0')
@@ -85,7 +85,7 @@ dice_loss = DiceLoss(nclass=2)
 optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
 # ------------------ Resume Setup ------------------ #
-start_epoch = 69  # <<< CHANGE HERE to resume training
+start_epoch = 0  # <<< CHANGE HERE to resume training
 best_dice = 0
 checkpoint_path = os.path.join(args.save_path, "last_checkpoint.pth")
 
