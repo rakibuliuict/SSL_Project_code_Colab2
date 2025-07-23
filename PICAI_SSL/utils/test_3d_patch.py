@@ -48,7 +48,7 @@ def load_image_and_label(image_path):
     image = np.stack([t2w, adc, hbv], axis=0).astype(np.float32)  # [3, H, W, D]
     return image, label
 
-def test_single_case_mean(model1, model2, image, stride_xy, stride_z, patch_size, num_classes=1):
+def test_single_case_mean(model1, model2, image, stride_xy, stride_z, patch_size, num_classes=2):
     c, h, w, d = image.shape
     image = np.transpose(image, (0, 3, 1, 2))
     add_pad = False
@@ -96,10 +96,10 @@ def test_single_case_mean(model1, model2, image, stride_xy, stride_z, patch_size
         pred = pred[z0:z1, y0:y1, x0:x1]
     return pred, score_map
 
-def test_single_case(model, image, stride_xy, stride_z, patch_size, num_classes=1):
+def test_single_case(model, image, stride_xy, stride_z, patch_size, num_classes=2):
     return test_single_case_mean(model, model, image, stride_xy, stride_z, patch_size, num_classes)
 
-def test_single_case_plus(model1, model2, image, stride_xy, stride_z, patch_size, num_classes=1):
+def test_single_case_plus(model1, model2, image, stride_xy, stride_z, patch_size, num_classes=2):
     return test_single_case_mean(model1, model2, image, stride_xy, stride_z, patch_size, num_classes)
 
 # def var_all_case_LA(model, num_classes, patch_size=(256, 256, 16), stride_xy=18, stride_z=4):
