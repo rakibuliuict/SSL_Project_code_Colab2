@@ -37,7 +37,7 @@ from pancreas.vnet_picai import VNet
 from networks.ResVNet import ResVNet
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/PICAI_dataset', help='Name of Dataset')
+parser.add_argument('--root_path', type=str, default='/content/drive/MyDrive/SSL/Dataset/160_160_16', help='Name of Dataset')
 parser.add_argument('--exp', type=str, default='SDCL', help='exp_name')
 parser.add_argument('--model', type=str, default='VNet', help='model_name')
 parser.add_argument('--pre_max_iteration', type=int, default=2000, help='maximum pre-train iteration to train')
@@ -158,7 +158,7 @@ if args.deterministic:
     random.seed(args.seed)
     np.random.seed(args.seed)
 
-patch_size = (256, 256, 16)
+patch_size = (160, 160, 16)
 num_classes = 2
 
 

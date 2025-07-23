@@ -2,11 +2,11 @@ import random
 import math
 
 # Path to your input file (update as needed)
-input_file = "/content/drive/MyDrive/SSL/Code/Colab_1/SSL_Project/PICAI_SSL/Datasets/picai/data_split/train.txt"
+input_file = "/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids/train.txt"
 
 # Output paths
-train_file = "/content/drive/MyDrive/SSL/Code/Colab_1/SSL_Project/PICAI_SSL/Datasets/picai/data_split/train_unlab.txt"
-test_file = "/content/drive/MyDrive/SSL/Code/Colab_1/SSL_Project/PICAI_SSL/Datasets/picai/data_split/train_lab.txt"
+train_file = "/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids/train_unlab.txt"
+test_file = "/content/drive/MyDrive/SSL/Dataset/Data_split/423_pids/train_lab.txt"
 
 # Step 1: Load all patient IDs from the file
 with open(input_file, "r") as f:
